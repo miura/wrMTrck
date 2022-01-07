@@ -69,6 +69,8 @@ import ij.process.ImageProcessor;
 		(Konstantine Palanski) Summary repors frames with maximum and minimum number of objects and the frame with maximum number of tracked objects
 	Build 170303
 		Added undocumented raw data output with rawData = 7
+	Build 220107 (Kota)
+		Mavenized		
 
 TODO
 	(Allow user to provide a thresholded image-stack instead of requiring binary-stack) - done
@@ -83,7 +85,7 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 	private	boolean           verbose = IJ.debugMode;
 	ImagePlus	imp;
 	int		nParticles;
-	static	String 	buildNo = "Build 111031";
+	static	String 	buildNo = "Build 220107";
 	static int 	fontSize = 16;
 	static int	minSize = 100;
 	static int	maxSize = 400;

@@ -25,7 +25,7 @@ import ij.process.ImageProcessor;
 
 
 /**
-	wrMTrck by Jesper S�ndergaard Pedersen (JSP)
+	wrMTrck by Jesper Søndergaard Pedersen (JSP)
 
 	Uses ImageJ's particle analyzer to track the movement of
 	multiple objects through a stack. Uses the changes in aspect
@@ -37,7 +37,7 @@ import ij.process.ImageProcessor;
 	History
 
 	Build 090408
-		Implemented dos.newLine() instead of hard-coded "\n"
+		Implemented dos.newLine() instead of hard-coded "¥n"
 		Changed maxAreaChange to a percentage instead of pixel value
 	Build 090707
 		Added summarize feature
@@ -125,7 +125,7 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 
 
 	private static	String prevHdr;
-	private String	summaryHdr = "File\tnObj\tnObjFrm\tnFrames\tnTracks\ttotLength\tObjFrames\tObjSeconds\tavgSpeed\tavgArea\tavgPerim\tstdSpeed\tstdArea\tstdPerim"; // (KP)
+	private String	summaryHdr = "File¥tnObj¥tnObjFrm¥tnFrames¥tnTracks¥ttotLength¥tObjFrames¥tObjSeconds¥tavgSpeed¥tavgArea¥tavgPerim¥tstdSpeed¥tstdArea¥tstdPerim"; // (KP)
 	private static	String prevhHdr;
 	private String	histogramHdr	= "";
 	private double	pixelWidth=1.0, pixelHeight=1.0;
@@ -133,48 +133,48 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 	boolean done;
 
 
-	public class particle {
-		float	x;
-		float	y;
-		float	sx;		// smoothed x-coordinate
-		float	sy;		// smoothed y-coordinate
-		int	z;
-		float	area;	// inserted by JSP
-		float	major;
-		float	minor;
-		float	ar;
-		float	angle;
-		float	circularity;
-		float	dist;  // contains the distance traveled since last frame.
-		float   perimeter; // length of the perimeter of a object
-		int	trackNr;
-		boolean inTrack=false;
-		boolean flag=false;
-
-		public void copy(particle source) {
-			this.x=source.x;
-			this.y=source.y;
-			this.z=source.z;  // frame
-			this.major=source.major;
-			this.minor=source.minor;
-			this.ar=source.ar;
-			this.area= source.area;
-			this.angle = source.angle;
-			this.circularity = source.circularity;
-			this.dist = source.dist;
-			this.perimeter = source.perimeter;
-			this.inTrack=source.inTrack;
-			this.flag=source.flag;
-		}
-
-		public float distance (particle p) {
-			return (float) Math.sqrt(sqr(this.x-p.x) + sqr(this.y-p.y));
-		}
-
-		public float sdistance (particle p) {
-			return (float) Math.sqrt(sqr(this.sx-p.sx) + sqr(this.sy-p.sy));
-		}
-	}
+//	public class particle {
+//		float	x;
+//		float	y;
+//		float	sx;		// smoothed x-coordinate
+//		float	sy;		// smoothed y-coordinate
+//		int	z;
+//		float	area;	// inserted by JSP
+//		float	major;
+//		float	minor;
+//		float	ar;
+//		float	angle;
+//		float	circularity;
+//		float	dist;  // contains the distance traveled since last frame.
+//		float   perimeter; // length of the perimeter of a object
+//		int	trackNr;
+//		boolean inTrack=false;
+//		boolean flag=false;
+//
+//		public void copy(particle source) {
+//			this.x=source.x;
+//			this.y=source.y;
+//			this.z=source.z;  // frame
+//			this.major=source.major;
+//			this.minor=source.minor;
+//			this.ar=source.ar;
+//			this.area= source.area;
+//			this.angle = source.angle;
+//			this.circularity = source.circularity;
+//			this.dist = source.dist;
+//			this.perimeter = source.perimeter;
+//			this.inTrack=source.inTrack;
+//			this.flag=source.flag;
+//		}
+//
+//		public float distance (particle p) {
+//			return (float) Math.sqrt(sqr(this.x-p.x) + sqr(this.y-p.y));
+//		}
+//
+//		public float sdistance (particle p) {
+//			return (float) Math.sqrt(sqr(this.sx-p.sx) + sqr(this.sy-p.sy));
+//		}
+//	}
 
 	public int setup(String arg, ImagePlus imp) {
 		this.imp = imp;
@@ -815,32 +815,32 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 					File outputfile=new File (directory,filename);
 					BufferedWriter dos= new BufferedWriter (new FileWriter (outputfile)); //append
 					if (bendType>0){
-						dos.write("Track \tLength\tDistance\t#Frames\t1stFrame\ttime(s)\tMaxSpeed\tAvgArea\tStdArea\tAvgPerim\tStdPerim\tAvgSpeed\tBLPS\tavgX\tavgX\tBends\tBBPS");
+						dos.write("Track ¥tLength¥tDistance¥t#Frames¥t1stFrame¥ttime(s)¥tMaxSpeed¥tAvgArea¥tStdArea¥tAvgPerim¥tStdPerim¥tAvgSpeed¥tBLPS¥tavgX¥tavgX¥tBends¥tBBPS");
 					}
 					else {
-						dos.write("Track \tLength\tDistance\t#Frames\t1stFrame\ttime(s)\tMaxSpeed\tAvgArea\tStdArea\tAvgPerim\tStdPerim\tAvgSpeed\tBLPS\tavgX\tavgX");
+						dos.write("Track ¥tLength¥tDistance¥t#Frames¥t1stFrame¥ttime(s)¥tMaxSpeed¥tAvgArea¥tStdArea¥tAvgPerim¥tStdPerim¥tAvgSpeed¥tBLPS¥tavgX¥tavgX");
 					}
 
 					dos.newLine();
 					for (int i=0; i<displayTrackNr; i++) {
-						String str = "" + (i+1) + "\t" + (float)lengths[i] + "\t"
-							+ (float)distances[i] + "\t"
-							+ (int)frames[i]+ "\t"
-							+ (int)firstFrames[i] + "\t"
-							+ (float)(frames[i]/fps) +"\t"
-							+ (float)fps*maxspeeds[i] + "\t"
-							+ (float)areas[i]+"\t"
-							+ (float)areaStdev[i]+"\t"
-							+ (float)perims[i] +"\t"
-							+ (float)perimsStdev[i] + "\t"
-							+ (float)(fps*lengths[i]/frames[i]) + "\t"
-							+ (float)(fps*2*lengths[i]/perims[i]/frames[i])+ "\t"
-							+ (float)avgX[i]+ "\t"
+						String str = "" + (i+1) + "¥t" + (float)lengths[i] + "¥t"
+							+ (float)distances[i] + "¥t"
+							+ (int)frames[i]+ "¥t"
+							+ (int)firstFrames[i] + "¥t"
+							+ (float)(frames[i]/fps) +"¥t"
+							+ (float)fps*maxspeeds[i] + "¥t"
+							+ (float)areas[i]+"¥t"
+							+ (float)areaStdev[i]+"¥t"
+							+ (float)perims[i] +"¥t"
+							+ (float)perimsStdev[i] + "¥t"
+							+ (float)(fps*lengths[i]/frames[i]) + "¥t"
+							+ (float)(fps*2*lengths[i]/perims[i]/frames[i])+ "¥t"
+							+ (float)avgX[i]+ "¥t"
 							+ (float)avgY[i] ;
 
 						if (bendType>0) {
-								str += "\t"
-							+ (float)bends[i]+ "\t"
+								str += "¥t"
+							+ (float)bends[i]+ "¥t"
 							+ (float)fps*bends[i]/frames[i] ;
 						}
 
@@ -849,13 +849,13 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 				}
 					if (binSize>0) {
 						dos.newLine();
-						dos.write("Bin\t");
-						for (int t=0; t<displayTrackNr; t++) { dos.write("T#"+(int)(t+1)+"\t");};
+						dos.write("Bin¥t");
+						for (int t=0; t<displayTrackNr; t++) { dos.write("T#"+(int)(t+1)+"¥t");};
 						dos.newLine();
 
 						for (int i=0; i<(int)(maxVelocity/binSize); i++) {
-							String str = "" + (float)i*binSize + "\t" ;
-							for (int t=0; t<displayTrackNr; t++) { str = str +bins[t][i]+"\t";};
+							String str = "" + (float)i*binSize + "¥t" ;
+							for (int t=0; t<displayTrackNr; t++) { str = str +bins[t][i]+"¥t";};
 							dos.write(str);
 							dos.newLine();
 						}
@@ -863,14 +863,14 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 					if(bendType>2) {
 						dos.newLine();
 						String str= "Bin";
-						for (int t=0; t<displayTrackNr; t++) { str=str+("\tTrack"+(int)(t+1));};
+						for (int t=0; t<displayTrackNr; t++) { str=str+("¥tTrack"+(int)(t+1));};
 						dos.write(str);
 						dos.newLine();
 						for (int i=0; i<101; i++) {
 						    int mySum=0;
 							str = "" + (float)i ;
 							for (int t=0; t<displayTrackNr; t++) {
-								str += "\t" +bBins[t][i];
+								str += "¥t" +bBins[t][i];
 								//mySum+=bBins[t][i];
 								};
 							dos.write(str);
@@ -882,7 +882,7 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 				}
 				catch (IOException e) {
 				if (filename != null)
-					IJ.error ("An error occurred writing the file. \n \n " + e);
+					IJ.error ("An error occurred writing the file. ¥n ¥n " + e);
 				}
 
 			}
@@ -918,15 +918,15 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 
 						// Write histogram for individual track in the movie
 						IJ.write("");
-						String str = "Bin\t";
-						for (int t=0; t<displayTrackNr; t++) { str=str+("Track"+(int)(t+1)+"\t");};
-						str=str+"\n";
+						String str = "Bin¥t";
+						for (int t=0; t<displayTrackNr; t++) { str=str+("Track"+(int)(t+1)+"¥t");};
+						str=str+"¥n";
 						IJ.write(str);
 
 						for (int i=0; i<(int)(maxVelocity/binSize); i++) {
-							str = "" + (float)i*binSize + "\t" ;
-							for (int t=0; t<displayTrackNr; t++) { str = str +bins[t][i]+"\t";};
-							IJ.write(str+"\n");
+							str = "" + (float)i*binSize + "¥t" ;
+							for (int t=0; t<displayTrackNr; t++) { str = str +bins[t][i]+"¥t";};
+							IJ.write(str+"¥n");
 
 							}
 					}
@@ -934,16 +934,16 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 					if(bendType>2) {
 						IJ.write("");
 						String str= "#Frames";
-						for (int t=0; t<displayTrackNr; t++) { str=str+("\tTrack"+(int)(t+1));};
-						IJ.write(str+"\n");
+						for (int t=0; t<displayTrackNr; t++) { str=str+("¥tTrack"+(int)(t+1));};
+						IJ.write(str+"¥n");
 						for (int i=0; i<101; i++) {
 						    int mySum=0;
 							str = "" + (float)i ;
 							for (int t=0; t<displayTrackNr; t++) {
-								str += "\t" +bBins[t][i];
+								str += "¥t" +bBins[t][i];
 								//mySum+=bBins[t][i];
 								};
-							IJ.write(str /*+(int)mySum*/ +"\n");
+							IJ.write(str /*+(int)mySum*/ +"¥n");
 						}
 
 					}
@@ -952,13 +952,13 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 			// summarize the speed histogram for the movie
 
 			if (binSize>0) {
-				histogramHdr = "Bin\t";
-				String str2= rawFilename+"\t";
+				histogramHdr = "Bin¥t";
+				String str2= rawFilename+"¥t";
 						for (int i=0; i<(int)(maxVelocity/binSize); i++) {
 						    int mySum=0;
-							histogramHdr += (float)fps*pixelWidth*i*binSize + "\t" ; //pixels/frame * �m/pixels *frame/s  pixelWidth*
-							for (int t=0; t<displayTrackNr; t++) { mySum+=bins[t][i] ;}; //str = str +bins[t][i]+"\t";};
-							str2+=(float) mySum + "\t";
+							histogramHdr += (float)fps*pixelWidth*i*binSize + "¥t" ; //pixels/frame * ｵm/pixels *frame/s  pixelWidth*
+							for (int t=0; t<displayTrackNr; t++) { mySum+=bins[t][i] ;}; //str = str +bins[t][i]+"¥t";};
+							str2+=(float) mySum + "¥t";
 						}
 
 		    	        Frame frame = WindowManager.getFrame("SpeedHistogram");
@@ -1069,36 +1069,36 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 
 				}
 		        String aLine = null;
-				summaryHdr = "File\tnObjMax\tnObjMaxFrm\tnObjMin\tnObjMinFrm\tkpMax\tkpMaxFrm\tnFrames\tnTracks\ttotLength\tObjFrames\tObjSeconds\tavgSpeed\tavgArea\tavgPerim\tstdSpeed\tstdArea\tstdPerim";
-				if (bendType>0) summaryHdr += "\tBends\tavgBBPS\tstdBBPS" ;
+				summaryHdr = "File¥tnObjMax¥tnObjMaxFrm¥tnObjMin¥tnObjMinFrm¥tkpMax¥tkpMaxFrm¥tnFrames¥tnTracks¥ttotLength¥tObjFrames¥tObjSeconds¥tavgSpeed¥tavgArea¥tavgPerim¥tstdSpeed¥tstdArea¥tstdPerim";
+				if (bendType>0) summaryHdr += "¥tBends¥tavgBBPS¥tstdBBPS" ;
 
-				aLine= rawFilename	+"\t"+(int)nMax 				//number of objects (N-value)
-							+"\t"+(int)nMaxFrm						// frame at nMax (KP)
-							+"\t"+(int)nMin							// nMin (KP)
-							+"\t"+(int)nMinFrm						// frame at nMin (KP)
-							+"\t"+(int)kpMax						// kpMax objects (KP)
-							+"\t"+(int)kpFrm						// frame at kpMax objects (KP)
-							+"\t"+(int)nFrames						// number of frames
-							+"\t"+(int)displayTrackNr				//number of tracks
-							+"\t"+(float)sumLengths					//total distance covered by all objects
-							+"\t"+(float)sumFrames					//total number of object*frames
-							+"\t"+(float)sumFrames/fps				//total obj*seconds
-							+"\t"+(float)avgSpeed					//average speed (pixels/seconds)
-							+"\t"+(float)avgArea					//average worm area
-							+"\t"+(float)avgPerim					//average worm perimeter
-							+"\t"+(float)Math.sqrt(sumSpeedSq/(displayTrackNr-1))//average speed (pixels/seconds)
-							+"\t"+(float)Math.sqrt(sumAreaSq/(displayTrackNr-1))//average worm area
-							+"\t"+(float)Math.sqrt(sumPerimSq/(displayTrackNr-1))	//average worm perimeter
+				aLine= rawFilename	+"¥t"+(int)nMax 				//number of objects (N-value)
+							+"¥t"+(int)nMaxFrm						// frame at nMax (KP)
+							+"¥t"+(int)nMin							// nMin (KP)
+							+"¥t"+(int)nMinFrm						// frame at nMin (KP)
+							+"¥t"+(int)kpMax						// kpMax objects (KP)
+							+"¥t"+(int)kpFrm						// frame at kpMax objects (KP)
+							+"¥t"+(int)nFrames						// number of frames
+							+"¥t"+(int)displayTrackNr				//number of tracks
+							+"¥t"+(float)sumLengths					//total distance covered by all objects
+							+"¥t"+(float)sumFrames					//total number of object*frames
+							+"¥t"+(float)sumFrames/fps				//total obj*seconds
+							+"¥t"+(float)avgSpeed					//average speed (pixels/seconds)
+							+"¥t"+(float)avgArea					//average worm area
+							+"¥t"+(float)avgPerim					//average worm perimeter
+							+"¥t"+(float)Math.sqrt(sumSpeedSq/(displayTrackNr-1))//average speed (pixels/seconds)
+							+"¥t"+(float)Math.sqrt(sumAreaSq/(displayTrackNr-1))//average worm area
+							+"¥t"+(float)Math.sqrt(sumPerimSq/(displayTrackNr-1))	//average worm perimeter
 							;
 				if (bendType>0) {
-					aLine +=	"\t"+(float)sumBends					// total number of body bends in the movie
-							+"\t"+(float)avgBBPS					// average BBPS per track
-							+"\t"+(float)Math.sqrt(sumBBPSSq/(displayTrackNr-1)) // standard deviation of BBPS per track
+					aLine +=	"¥t"+(float)sumBends					// total number of body bends in the movie
+							+"¥t"+(float)avgBBPS					// average BBPS per track
+							+"¥t"+(float)Math.sqrt(sumBBPSSq/(displayTrackNr-1)) // standard deviation of BBPS per track
 							;
 
 				}
 
-    	        //IJ.log(aLine+"\n");
+    	        //IJ.log(aLine+"¥n");
     	        Frame frame = WindowManager.getFrame("Summary");
         	    if (frame!=null && (frame instanceof TextWindow) && summaryHdr.equals(prevHdr))
             	    tw = (TextWindow)frame;
@@ -1130,14 +1130,14 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 			List bTrack=(ArrayList) iT.next();
 			if (bTrack.size() >= minTrackLength) {
 				if (trackCount <= maxColumns) {
-					if (rawData==1) strHeadings += "\tX" + trackCount + "\tY" + trackCount +"\tFlag" + trackCount;
-					if (rawData==2) strHeadings += "\tMajor" + trackCount + "\tMinor" + trackCount + "\tAngle" + trackCount;
-					if (rawData==3) strHeadings += "\tArea" + trackCount + "\tPerimeter" + trackCount + "\tDistance" + trackCount;
-					if (rawData==4) strHeadings += "\tMajor" + trackCount + "\tMinor" + trackCount + "\tCircularity" + trackCount;
-					if (rawData==5) strHeadings += "\tShape" + trackCount + "\tRateOfChange" + trackCount + "\tSumOfChange" + trackCount;
-					if (rawData==6) strHeadings += "\tX" + trackCount + "\tY" + trackCount + "\tArea" + trackCount+"\tPerim"
-						+ trackCount+"\tAngle" + trackCount+"\tAR" + trackCount+ "\tFlag" + trackCount;
-					if (rawData==7) strHeadings += "\tX" + trackCount + "\tY" + trackCount + "\tMajor" + trackCount+"\tMinor" + trackCount;
+					if (rawData==1) strHeadings += "¥tX" + trackCount + "¥tY" + trackCount +"¥tFlag" + trackCount;
+					if (rawData==2) strHeadings += "¥tMajor" + trackCount + "¥tMinor" + trackCount + "¥tAngle" + trackCount;
+					if (rawData==3) strHeadings += "¥tArea" + trackCount + "¥tPerimeter" + trackCount + "¥tDistance" + trackCount;
+					if (rawData==4) strHeadings += "¥tMajor" + trackCount + "¥tMinor" + trackCount + "¥tCircularity" + trackCount;
+					if (rawData==5) strHeadings += "¥tShape" + trackCount + "¥tRateOfChange" + trackCount + "¥tSumOfChange" + trackCount;
+					if (rawData==6) strHeadings += "¥tX" + trackCount + "¥tY" + trackCount + "¥tArea" + trackCount+"¥tPerim"
+						+ trackCount+"¥tAngle" + trackCount+"¥tAR" + trackCount+ "¥tFlag" + trackCount;
+					if (rawData==7) strHeadings += "¥tX" + trackCount + "¥tY" + trackCount + "¥tMajor" + trackCount+"¥tMinor" + trackCount;
 				}
 				trackCount++;
 			}
@@ -1272,33 +1272,33 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 											else
 												flags=" ";
 											if (rawData==3) {
-												strLine+="\t" + aParticle.area + "\t" + aParticle.perimeter + "\t" + aParticle.dist;
+												strLine+="¥t" + aParticle.area + "¥t" + aParticle.perimeter + "¥t" + aParticle.dist;
 											}
 											else if (rawData==5) {
-												strLine+="\t" + angles[listTrackNr][i] + "\t" + dAngles[listTrackNr][i] + "\t" + sumDAngles[listTrackNr][i] ;
+												strLine+="¥t" + angles[listTrackNr][i] + "¥t" + dAngles[listTrackNr][i] + "¥t" + sumDAngles[listTrackNr][i] ;
 											}
 											else if (rawData==6) {
-												strLine+="\t" + aParticle.x + "\t" + aParticle.y + "\t" +  aParticle.area + "\t"
-													+ aParticle.perimeter + "\t" + aParticle.angle+ "\t" + aParticle.ar + "\t" +  flags;
+												strLine+="¥t" + aParticle.x + "¥t" + aParticle.y + "¥t" +  aParticle.area + "¥t"
+													+ aParticle.perimeter + "¥t" + aParticle.angle+ "¥t" + aParticle.ar + "¥t" +  flags;
 											}
 											else if (rawData==7) {
-												strLine+="\t" + aParticle.x + "\t" + aParticle.y + "\t" +  aParticle.major + "\t"
+												strLine+="¥t" + aParticle.x + "¥t" + aParticle.y + "¥t" +  aParticle.major + "¥t"
 													+ aParticle.minor ;
 											}
 											else if (rawData==4) {
-												strLine+="\t" + aParticle.major + "\t" + aParticle.minor + "\t" + aParticle.circularity ;
+												strLine+="¥t" + aParticle.major + "¥t" + aParticle.minor + "¥t" + aParticle.circularity ;
 											}
 											else if (rawData==2) {
-												strLine+="\t" + aParticle.major + "\t" + aParticle.minor + "\t" + aParticle.angle ;
+												strLine+="¥t" + aParticle.major + "¥t" + aParticle.minor + "¥t" + aParticle.angle ;
 											}
 											else {
-												strLine+="\t" + aParticle.x + "\t" + aParticle.y + "\t" + flags;
+												strLine+="¥t" + aParticle.x + "¥t" + aParticle.y + "¥t" + flags;
 
 											}
 										}
 									}
 									if (!particleFound)
-										strLine+="\t\t\t";
+										strLine+="¥t¥t¥t";
 								}
 							}
 						}
@@ -1312,7 +1312,7 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 			}
 			catch (IOException e) {
 				if (filename != null)
-				IJ.error ("An error occurred writing the file. \n \n " + e);
+				IJ.error ("An error occurred writing the file. ¥n ¥n " + e);
 			}
 		}
 
@@ -1418,7 +1418,6 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 
 
 	// Utility functions
-	double sqr(double n) {return n*n;}
 
 	int doOffset (int center, int maxSize, int displacement) {
 		if ((center - displacement) < 2*displacement) {

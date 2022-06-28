@@ -1,21 +1,40 @@
 package wormTracker;
 
 import ij.plugin.filter.PlugInFilter;
-import java.util.*;
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.Font;
-import java.io.*;
 
-import ij.*;
-import ij.gui.*;
-import ij.io.*;
-import ij.process.*;
-import ij.measure.*;
-import ij.text.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Frame;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.DoubleSummaryStatistics;
+import java.util.List;
+import java.util.ListIterator;
+
+
 import ij.plugin.filter.ParticleAnalyzer;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.ImageStack;
+import ij.WindowManager;
+import ij.gui.GenericDialog;
+import ij.gui.Plot;
+import ij.gui.PlotWindow;
+import ij.io.SaveDialog;
+import ij.measure.Calibration;
+import ij.measure.Measurements;
+import ij.measure.ResultsTable;
 import ij.plugin.filter.BackgroundSubtracter;
+import ij.process.AutoThresholder;
+import ij.process.Blitter;
+import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
+import ij.text.TextWindow;
 
 
 /**

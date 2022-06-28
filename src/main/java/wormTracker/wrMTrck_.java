@@ -181,12 +181,8 @@ public class wrMTrck_ implements PlugInFilter, Measurements  {
 	}
 //===================================================== max
 	public static double max(double[] t) {
-   		double maximum = t[0];   // start with the first value
-   		for (int i=1; i<t.length; i++) {
-        	if (t[i] > maximum) {
-            	maximum = t[i];   // new maximum
-        	}
-    	}
+        DoubleSummaryStatistics stat = Arrays.stream(t).summaryStatistics();
+        double maximum = stat.getMax();
     return maximum;
 }//end method max
 

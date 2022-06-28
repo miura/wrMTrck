@@ -2,6 +2,7 @@ package wormTracker;
 
 
 public class particle {
+
 	float	x;
 	float	y;
 	float	sx;		// smoothed x-coordinate
@@ -18,7 +19,31 @@ public class particle {
 	int	trackNr;
 	boolean inTrack=false;
 	boolean flag=false;
-
+	
+	public particle() {
+		
+	}
+	public particle(float x, float y, int z, 
+			float area, float angle, float major, 
+			float minor, float perimeter) {
+		super();
+		this.x = x;
+		this.y = y;
+		if (Parameters.bRoundCoord) {
+			this.x = Math.round( x );
+			this.y = Math.round( y );			
+		}
+		this.z = z;
+		this.area = area;
+		this.major = major;
+		this.minor = minor;
+		this.angle = angle;
+		//this.circularity = circularity;
+		this.perimeter = perimeter;
+		if (minor > 0)
+			this.ar = major / minor;
+	}
+	
 	public void copy(particle source) {
 		this.x=source.x;
 		this.y=source.y;

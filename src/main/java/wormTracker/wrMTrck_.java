@@ -4,7 +4,6 @@ import ij.plugin.filter.PlugInFilter;
 import java.util.*;
 import java.awt.Color;
 import java.awt.Frame;
-import java.awt.image.IndexColorModel;
 import java.awt.Font;
 import java.io.*;
 
@@ -15,12 +14,7 @@ import ij.process.*;
 import ij.measure.*;
 import ij.text.*;
 import ij.plugin.filter.ParticleAnalyzer;
-import ij.plugin.filter.Analyzer;
 import ij.plugin.filter.BackgroundSubtracter;
-import ij.plugin.frame.Recorder;
-import ij.plugin.frame.RoiManager;
-import ij.macro.Interpreter;
-import ij.util.Tools;
 import ij.process.ImageProcessor;
 
 

@@ -1,38 +1,22 @@
 package wormTracker;
 
-import ij.plugin.filter.PlugInFilter;
-
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Frame;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
 
-import org.scijava.script.process.ParameterScriptProcessor;
-
-import ij.plugin.filter.ParticleAnalyzer;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.WindowManager;
-import ij.gui.Plot;
-import ij.gui.PlotWindow;
 import ij.io.SaveDialog;
 import ij.measure.Calibration;
 import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.filter.BackgroundSubtracter;
+import ij.plugin.filter.ParticleAnalyzer;
+import ij.plugin.filter.PlugInFilter;
 import ij.process.AutoThresholder;
 import ij.process.Blitter;
-import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 import ij.text.TextWindow;
@@ -123,22 +107,26 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 			suppressHeader = false;
 		}
 		;
-		rawFilename = imp.getTitle();
-		int dotPos = rawFilename.lastIndexOf('.');
-		if (0 < dotPos && dotPos < rawFilename.length() - 2) {
-			rawFilename = rawFilename.substring(0, dotPos);
-		}
+		rawFilename = prepareRawFilename( imp );
 		if (Parameters.bSaveResultsFile) {
 			SaveDialog sd = new SaveDialog("Save Track Results", rawFilename, ".txt");
 			directory = sd.getDirectory();
 			filename = sd.getFileName();
 		}
-		Frame frame = WindowManager.getFrame("Summary");
-
-		if (done)
+		Frame frame = WindowManager.getFrame("Summary"); //?
+		if (done)  //?
 			return;
 
 		track(imp, directory, filename);
+	}
+	
+	public String prepareRawFilename(ImagePlus imp) {
+		String rawFilename = imp.getTitle();
+		int dotPos = rawFilename.lastIndexOf('.');
+		if (0 < dotPos && dotPos < rawFilename.length() - 2) {
+			rawFilename = rawFilename.substring(0, dotPos);
+		}
+		return rawFilename;
 	}
 
 	public void track(ImagePlus imp, String directory, String filename) {
@@ -516,4 +504,24 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 			return (0.0);
 	}
 
+	public static void main(String[] args) {
+		String orgimagepath = "/Users/miura/Dropbox/Freelance/projects/20220100_Osaka/2022_Celegans/sample01c-360-459crop.tif";
+		ImagePlus imp = new ImagePlus(orgimagepath);
+		wrMTrck_ wmt = new wrMTrck_();
+		String  rawFilename = wmt.prepareRawFilename(imp);
+		Parameters.minTrackLength = 10;
+		Parameters.rawData = 1;
+		wmt.suppressHeader = false;
+		Parameters.bSaveResultsFile = true;
+		//SaveDialog sd = new SaveDialog("Save Track Results", rawFilename, ".txt");
+
+		String directory = "/Users/miura/Desktop/testoutCUI/";
+					// sd.getDirectory();
+		String filename = rawFilename + ".txt"; //sd.getFileName();
+		//IJ.log(directory);
+		//IJ.log(filename);
+		imp.getProcessor().setThreshold(0, 133, ImageProcessor.NO_LUT_UPDATE);
+		wmt.track(imp, directory, filename);
+
+	}
 }

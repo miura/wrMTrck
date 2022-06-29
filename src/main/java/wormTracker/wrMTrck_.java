@@ -22,47 +22,58 @@ import ij.process.ImageStatistics;
 import ij.text.TextWindow;
 
 /**
- * wrMTrck by Jesper Søndergaard Pedersen (JSP)
- * 
- * Uses ImageJ's particle analyzer to track the movement of multiple objects
- * through a stack. Uses the changes in aspect ratio of elipse fitting to
- * quantify "thrashing" or swimming motion of C. elegans worms
- * 
- * Based on MTrack2 by 2003/06/28 Nico Stuurman
- * 
- * History
- * 
- * Build 090408 Implemented dos.newLine() instead of hard-coded "¥n" Changed
- * maxAreaChange to a percentage instead of pixel value Build 090707 Added
- * summarize feature Added Body-bend display on showPositions Added posibility
- * to make an FPS override Now Works with scale-calibrated images Build 090804
- * Fixed a bug in output of raw data. Build 091115 Added x-y point smoothing
- * function to decrease the "noise" movement of immobile objects Build 100201
- * Corrected spelling mistake in input parameter "minTrackLength" (was
- * "minTrackLenght") - this may affect scripts. Build 100411 Corrected names in
- * some fields on the dialog Build 100706 Option to output plots of thrashing
- * analysis for quality control purposes to rapidly asses if threshold value is
- * good Build 101004 Now works on both binary and thresholded movies. Posibility
- * to enable on the fly deflickering and simple background subtraction based on
- * RB15 on first frame. This means that wrMTrck can now track animals in raw
- * movies and virtual stacks. Hitting the ESC key aborts analysis Build 110617
- * Added an extra input field to allow adjustment of label font size Build
- * 110622 Added output of bend-time histogram (in frames) for each animal in
- * text file output. Switch on/off histogram by adjusting bendDetect parameter
- * Build 111031 Corrected undocumented raw data output with rawData =6 With
- * rawData <0 headers are suppressed. (Konstantine Palanski) Summary repors
- * frames with maximum and minimum number of objects and the frame with maximum
- * number of tracked objects Build 170303 Added undocumented raw data output
- * with rawData = 7 Build 220107 (Kota) Mavenized
- * 
- * TODO (Allow user to provide a thresholded image-stack instead of requiring
- * binary-stack) - done Better support for multicore CPU to speed up analysis
- * (Not sure how much can be gained) Make output of histograms in more
- * user-friendly format Flexible user defineable point smoothing setting instead
- * of hard coded 5-point smoothing
- * 
- * 
- */
+	wrMTrck by Jesper Søndergaard Pedersen (JSP)
+	
+	Uses ImageJ's particle analyzer to track the movement of
+	multiple objects through a stack. Uses the changes in aspect
+	ratio of elipse fitting to quantify "thrashing" or
+	swimming motion of C. elegans worms
+	
+	Based on MTrack2 by 2003/06/28 Nico Stuurman
+
+	History
+
+	Build 090408
+		Implemented dos.newLine() instead of hard-coded "\n"
+		Changed maxAreaChange to a percentage instead of pixel value
+	Build 090707
+		Added summarize feature
+		Added Body-bend display on showPositions
+		Added posibility to make an FPS override
+		Now Works with scale-calibrated images
+	Build 090804
+		Fixed a bug in output of raw data.
+	Build 091115
+		Added x-y point smoothing function to decrease the "noise" movement of immobile objects
+	Build 100201
+		Corrected spelling mistake in input parameter "minTrackLength" (was "minTrackLenght") - this may affect scripts.
+	Build 100411
+		Corrected names in some fields on the dialog
+	Build 100706
+		Option to output plots of thrashing analysis for quality control purposes to rapidly asses if threshold value is good
+	Build 101004
+		Now works on both binary and thresholded movies.
+		Posibility to enable on the fly deflickering and simple background subtraction based on RB15 on first frame.
+		This means that wrMTrck can now track animals in raw movies and virtual stacks.
+		Hitting the ESC key aborts analysis
+	Build 110617
+		Added an extra input field to allow adjustment of label font size
+	Build 110622
+		Added output of bend-time histogram (in frames) for each animal in text file output. Switch on/off histogram by adjusting bendDetect parameter
+	    Build 111031
+		Corrected undocumented raw data output with rawData =6
+		With rawData <0 headers are suppressed.
+		(Konstantine Palanski) Summary repors frames with maximum and minimum number of objects and the frame with maximum number of tracked objects
+	Build 170303
+		Added undocumented raw data output with rawData = 7
+	Build 220107 (Kota)
+			Mavenized
+	TODO
+	(Allow user to provide a thresholded image-stack instead of requiring binary-stack) - done
+	Better support for multicore CPU to speed up analysis (Not sure how much can be gained)
+	Make output of histograms in more user-friendly format
+	Flexible user defineable point smoothing setting instead of hard coded 5-point smoothing
+*/
 public class wrMTrck_ implements PlugInFilter, Measurements {
 
 	private boolean verbose = IJ.debugMode;
@@ -81,7 +92,7 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 	private String directory, filename, rawFilename;
 
 	private static String prevHdr;
-	private String summaryHdr = "File¥tnObj¥tnObjFrm¥tnFrames¥tnTracks¥ttotLength¥tObjFrames¥tObjSeconds¥tavgSpeed¥tavgArea¥tavgPerim¥tstdSpeed¥tstdArea¥tstdPerim"; // (KP)
+	private String summaryHdr = "File\tnObj\tnObjFrm\tnFrames\tnTracks\ttotLength\tObjFrames\tObjSeconds\tavgSpeed\tavgArea\tavgPerim\tstdSpeed\tstdArea\tstdPerim"; // (KP)
 	private static String prevhHdr;
 	private String histogramHdr = "";
 	private double pixelWidth = 1.0, pixelHeight = 1.0;
@@ -436,7 +447,7 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 	}
 
 	public static void main(String[] args) {
-		String orgimagepath = "/Users/miura/Dropbox/Freelance/projects/20220100_Osaka/2022_Celegans/sample01c-360-459crop.tif";
+		String orgimagepath = "/Users/miura/Desktop/Celegans/sample01c-360-459crop.tif";
 		ImagePlus imp = new ImagePlus(orgimagepath);
 		wrMTrck_ wmt = new wrMTrck_();
 		String  rawFilename = wmt.prepareRawFilename(imp);

@@ -88,6 +88,15 @@ public class TrackAnalysis {
 		return bendCounter;
 	}
 
+	/**
+	 * 
+	 * @param directory : where the outputs are saved. 
+	 * @param filename : file name of the original image.
+	 * @param imp : ImagePlus object of the original image. 
+	 * @param theTracks : a list of tracks (each track is an ArrayList of particles object)
+	 * @param theParticles: HashMap with key = frame number (starting from 1) and value = ArrayList of detected particles in that frame.  
+	 * @param suppressHeader : an output option, whether to ignore printing column headers. 
+	 */
 	public TrackAnalysis(String directory, String filename, ImagePlus imp, ArrayList<ArrayList<particle>> theTracks,
 			HashMap<Integer, ArrayList<particle>> theParticles, boolean suppressHeader) {
 		super();
@@ -135,6 +144,11 @@ public class TrackAnalysis {
 		this.nMinFrm = nMinFrm;
 	}
 
+	/**
+	 * initialize output textfile if it is not there, or exit if not writable. 
+	 * @param outputfile
+	 * @return
+	 */
 	public boolean checkOutputTextFile(File outputfile) {
 		boolean writefile = false;
 		if (!outputfile.canWrite()) {
@@ -153,6 +167,9 @@ public class TrackAnalysis {
 		}
 		return writefile;
 	}
+	/**
+	 * the main routine
+	 */
 	public void run() {
 		boolean writefile = false;
 		// Initiate the writing of an output textfile if a filename is given.
@@ -451,6 +468,11 @@ public class TrackAnalysis {
 		}
 		return displayTrackNr;
 	}
+	/**
+	 * @TODO replace the Plot constructor https://javadoc.io/doc/net.imagej/ij/latest/ij/ij/gui/Plot.html
+	 * @param displayTrackNr
+	 * @return
+	 */
 	public ImagePlus plotBendCalculation(int displayTrackNr) {
 		// plot the first bend calculation for the first track
 		Parameters.plotBendTrack = 1;

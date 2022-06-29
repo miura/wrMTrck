@@ -154,28 +154,15 @@ public class TrackAnalysis {
 		return writefile;
 	}
 	public void run() {
-		
 		boolean writefile = false;
 		// Initiate the writing of an output textfile if a filename is given.
 		if (filename != null) {
 			File outputfile = new File(directory, filename);
 			writefile = checkOutputTextFile(outputfile);
-//			if (!outputfile.canWrite()) {
-//				try {
-//					outputfile.createNewFile();
-//				} catch (IOException e) {
-//					IJ.showMessage("Error", "Could not create " + directory + filename);
-//				}
-//			}
-//			if (outputfile.canWrite())
-//				writefile = true;
-//			else
-//				IJ.showMessage("Error", "Could not write to " + directory + filename);
-		}
+		} 
 
 		// Calculate length of paths, area of objects and number of body bends
 		//int trackCount = theTracks.size();
-
 		if (Parameters.bShowPathLengths) {;
 			if (Parameters.bSmoothing) {
 				IJ.showStatus("Smoothing tracks...");
@@ -416,88 +403,89 @@ public class TrackAnalysis {
 		}
 		// and now when we write to file
 		if (writefile && (Parameters.rawData > 0)) {
-			try {
-
-				File outputfile = new File(directory, filename.substring(0, filename.length() - 4) + "_raw.txt");
-
-//			File outputfile=new File (directory,filename);
-
-				BufferedWriter dos = new BufferedWriter(new FileWriter(outputfile, true));
-				if (!suppressHeader) {
-					dos.write(strHeadings);
-					dos.newLine();
-				}
-				for (int j = 1; j <= repeat; j++) {
-					int to = j * Parameters.maxColumns;
-					if (to > trackCount - 1)
-						to = trackCount - 1;
-					String stLine = "Tracks " + ((j - 1) * Parameters.maxColumns + 1) + " to " + to;
-					if (!suppressHeader) {
-						dos.write(stLine);
-						dos.newLine();
-					}
-					for (int i = 0; i <= (nFrames - 1); i++) {
-						String strLine = "" + (i + 1);
-						int trackNr = 0;
-						int listTrackNr = 0;
-						for (ListIterator iT = theTracks.listIterator(); iT.hasNext();) {
-							trackNr++;
-							List bTrack = (ArrayList) iT.next();
-							boolean particleFound = false;
-							if (bTrack.size() >= Parameters.minTrackLength) {
-								listTrackNr++;
-								if ((listTrackNr > ((j - 1) * Parameters.maxColumns))
-										&& (listTrackNr <= (j * Parameters.maxColumns))) {
-									for (ListIterator k = theParticles.get(i + 1).listIterator(); k.hasNext()
-											&& !particleFound;) {
-										particle aParticle = (particle) k.next();
-										if (aParticle.trackNr == trackNr) {
-											particleFound = true;
-											if (aParticle.flag)
-												flags = "*";
-											else
-												flags = " ";
-											if (Parameters.rawData == 3) {
-												strLine += "¥t" + aParticle.area + "¥t" + aParticle.perimeter + "¥t"
-														+ aParticle.dist;
-											} else if (Parameters.rawData == 5) {
-												strLine += "¥t" + angles[listTrackNr][i] + "¥t"
-														+ dAngles[listTrackNr][i] + "¥t" + sumDAngles[listTrackNr][i];
-											} else if (Parameters.rawData == 6) {
-												strLine += "¥t" + aParticle.x + "¥t" + aParticle.y + "¥t"
-														+ aParticle.area + "¥t" + aParticle.perimeter + "¥t"
-														+ aParticle.angle + "¥t" + aParticle.ar + "¥t" + flags;
-											} else if (Parameters.rawData == 7) {
-												strLine += "¥t" + aParticle.x + "¥t" + aParticle.y + "¥t"
-														+ aParticle.major + "¥t" + aParticle.minor;
-											} else if (Parameters.rawData == 4) {
-												strLine += "¥t" + aParticle.major + "¥t" + aParticle.minor + "¥t"
-														+ aParticle.circularity;
-											} else if (Parameters.rawData == 2) {
-												strLine += "¥t" + aParticle.major + "¥t" + aParticle.minor + "¥t"
-														+ aParticle.angle;
-											} else {
-												strLine += "¥t" + aParticle.x + "¥t" + aParticle.y + "¥t" + flags;
-
-											}
-										}
-									}
-									if (!particleFound)
-										strLine += "¥t¥t¥t";
-								}
-							}
-						}
-						dos.write(strLine);
-						dos.newLine();
-					}
-				}
-
-				dos.newLine();
-				dos.close();
-			} catch (IOException e) {
-				if (filename != null)
-					IJ.error("An error occurred writing the file. ¥n ¥n " + e);
-			}
+			writeParticleData( strHeadings, repeat);
+//			try {
+//
+//				File outputfile = new File(directory, filename.substring(0, filename.length() - 4) + "_raw.txt");
+//
+////			File outputfile=new File (directory,filename);
+//
+//				BufferedWriter dos = new BufferedWriter(new FileWriter(outputfile, true));
+//				if (!suppressHeader) {
+//					dos.write(strHeadings);
+//					dos.newLine();
+//				}
+//				for (int j = 1; j <= repeat; j++) {
+//					int to = j * Parameters.maxColumns;
+//					if (to > trackCount - 1)
+//						to = trackCount - 1;
+//					String stLine = "Tracks " + ((j - 1) * Parameters.maxColumns + 1) + " to " + to;
+//					if (!suppressHeader) {
+//						dos.write(stLine);
+//						dos.newLine();
+//					}
+//					for (int i = 0; i <= (nFrames - 1); i++) {
+//						String strLine = "" + (i + 1);
+//						int trackNr = 0;
+//						int listTrackNr = 0;
+//						for (ListIterator iT = theTracks.listIterator(); iT.hasNext();) {
+//							trackNr++;
+//							List bTrack = (ArrayList) iT.next();
+//							boolean particleFound = false;
+//							if (bTrack.size() >= Parameters.minTrackLength) {
+//								listTrackNr++;
+//								if ((listTrackNr > ((j - 1) * Parameters.maxColumns))
+//										&& (listTrackNr <= (j * Parameters.maxColumns))) {
+//									for (ListIterator k = theParticles.get(i + 1).listIterator(); k.hasNext()
+//											&& !particleFound;) {
+//										particle aParticle = (particle) k.next();
+//										if (aParticle.trackNr == trackNr) {
+//											particleFound = true;
+//											if (aParticle.flag)
+//												flags = "*";
+//											else
+//												flags = " ";
+//											if (Parameters.rawData == 3) {
+//												strLine += "¥t" + aParticle.area + "¥t" + aParticle.perimeter + "¥t"
+//														+ aParticle.dist;
+//											} else if (Parameters.rawData == 5) {
+//												strLine += "¥t" + angles[listTrackNr][i] + "¥t"
+//														+ dAngles[listTrackNr][i] + "¥t" + sumDAngles[listTrackNr][i];
+//											} else if (Parameters.rawData == 6) {
+//												strLine += "¥t" + aParticle.x + "¥t" + aParticle.y + "¥t"
+//														+ aParticle.area + "¥t" + aParticle.perimeter + "¥t"
+//														+ aParticle.angle + "¥t" + aParticle.ar + "¥t" + flags;
+//											} else if (Parameters.rawData == 7) {
+//												strLine += "¥t" + aParticle.x + "¥t" + aParticle.y + "¥t"
+//														+ aParticle.major + "¥t" + aParticle.minor;
+//											} else if (Parameters.rawData == 4) {
+//												strLine += "¥t" + aParticle.major + "¥t" + aParticle.minor + "¥t"
+//														+ aParticle.circularity;
+//											} else if (Parameters.rawData == 2) {
+//												strLine += "¥t" + aParticle.major + "¥t" + aParticle.minor + "¥t"
+//														+ aParticle.angle;
+//											} else {
+//												strLine += "¥t" + aParticle.x + "¥t" + aParticle.y + "¥t" + flags;
+//
+//											}
+//										}
+//									}
+//									if (!particleFound)
+//										strLine += "¥t¥t¥t";
+//								}
+//							}
+//						}
+//						dos.write(strLine);
+//						dos.newLine();
+//					}
+//				}
+//
+//				dos.newLine();
+//				dos.close();
+//			} catch (IOException e) {
+//				if (filename != null)
+//					IJ.error("An error occurred writing the file. ¥n ¥n " + e);
+//			}
 		}
 		//this.bendCounter = bendCounter;
 	}
@@ -1035,6 +1023,92 @@ public class TrackAnalysis {
 			}
 
 		}		
+	}
+	
+	public void writeParticleData(String strHeadings, int repeat) {
+		String flags;
+		try {
+
+			File outputfile = new File(directory, filename.substring(0, filename.length() - 4) + "_raw.txt");
+
+//		File outputfile=new File (directory,filename);
+
+			BufferedWriter dos = new BufferedWriter(new FileWriter(outputfile, true));
+			if (!suppressHeader) {
+				dos.write(strHeadings);
+				dos.newLine();
+			}
+			for (int j = 1; j <= repeat; j++) {
+				int to = j * Parameters.maxColumns;
+				if (to > trackCount - 1)
+					to = trackCount - 1;
+				String stLine = "Tracks " + ((j - 1) * Parameters.maxColumns + 1) + " to " + to;
+				if (!suppressHeader) {
+					dos.write(stLine);
+					dos.newLine();
+				}
+				for (int i = 0; i <= (nFrames - 1); i++) {
+					String strLine = "" + (i + 1);
+					int trackNr = 0;
+					int listTrackNr = 0;
+					for (ListIterator iT = theTracks.listIterator(); iT.hasNext();) {
+						trackNr++;
+						List bTrack = (ArrayList) iT.next();
+						boolean particleFound = false;
+						if (bTrack.size() >= Parameters.minTrackLength) {
+							listTrackNr++;
+							if ((listTrackNr > ((j - 1) * Parameters.maxColumns))
+									&& (listTrackNr <= (j * Parameters.maxColumns))) {
+								for (ListIterator k = theParticles.get(i + 1).listIterator(); k.hasNext()
+										&& !particleFound;) {
+									particle aParticle = (particle) k.next();
+									if (aParticle.trackNr == trackNr) {
+										particleFound = true;
+										if (aParticle.flag)
+											flags = "*";
+										else
+											flags = " ";
+										if (Parameters.rawData == 3) {
+											strLine += "¥t" + aParticle.area + "¥t" + aParticle.perimeter + "¥t"
+													+ aParticle.dist;
+										} else if (Parameters.rawData == 5) {
+											strLine += "¥t" + angles[listTrackNr][i] + "¥t"
+													+ dAngles[listTrackNr][i] + "¥t" + sumDAngles[listTrackNr][i];
+										} else if (Parameters.rawData == 6) {
+											strLine += "¥t" + aParticle.x + "¥t" + aParticle.y + "¥t"
+													+ aParticle.area + "¥t" + aParticle.perimeter + "¥t"
+													+ aParticle.angle + "¥t" + aParticle.ar + "¥t" + flags;
+										} else if (Parameters.rawData == 7) {
+											strLine += "¥t" + aParticle.x + "¥t" + aParticle.y + "¥t"
+													+ aParticle.major + "¥t" + aParticle.minor;
+										} else if (Parameters.rawData == 4) {
+											strLine += "¥t" + aParticle.major + "¥t" + aParticle.minor + "¥t"
+													+ aParticle.circularity;
+										} else if (Parameters.rawData == 2) {
+											strLine += "¥t" + aParticle.major + "¥t" + aParticle.minor + "¥t"
+													+ aParticle.angle;
+										} else {
+											strLine += "¥t" + aParticle.x + "¥t" + aParticle.y + "¥t" + flags;
+
+										}
+									}
+								}
+								if (!particleFound)
+									strLine += "¥t¥t¥t";
+							}
+						}
+					}
+					dos.write(strLine);
+					dos.newLine();
+				}
+			}
+
+			dos.newLine();
+			dos.close();
+		} catch (IOException e) {
+			if (filename != null)
+				IJ.error("An error occurred writing the file. ¥n ¥n " + e);
+		}
 	}
 
 	// ===================================================== max

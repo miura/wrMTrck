@@ -19,7 +19,6 @@ import ij.process.AutoThresholder;
 import ij.process.Blitter;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
-import ij.text.TextWindow;
 
 /**
 	wrMTrck by Jesper Søndergaard Pedersen (JSP)
@@ -79,31 +78,28 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 	private boolean verbose = IJ.debugMode;
 	ImagePlus imp;
 	int nParticles;
-
 	// KP
 	int nMax = 0;
 	int nMin = 99999;
 	int nMaxFrm = 0;
 	int nMinFrm = 0;
 	// EOKP
-
-	private TextWindow tw;
-	private TextWindow tw2;
 	private String directory, filename, rawFilename;
 
-	private static String prevHdr;
-	private String summaryHdr = "File\tnObj\tnObjFrm\tnFrames\tnTracks\ttotLength\tObjFrames\tObjSeconds\tavgSpeed\tavgArea\tavgPerim\tstdSpeed\tstdArea\tstdPerim"; // (KP)
-	private static String prevhHdr;
-	private String histogramHdr = "";
 	private double pixelWidth = 1.0, pixelHeight = 1.0;
 	private boolean suppressHeader;
 	boolean done;
 
 	public int setup(String arg, ImagePlus imp) {
 		this.imp = imp;
-		if (IJ.versionLessThan("1.17y"))
+		if (imp.getStackSize() < 2) {
+			IJ.showMessage("Tracker", "Stack required");
 			return DONE;
-		else
+		}				
+		if (IJ.versionLessThan("1.17y")) {
+			IJ.showMessage("Need a more recent ImageJ version (>1.17y)");
+			return DONE;
+		} else
 			return DOES_8G + NO_CHANGES;
 	}
 
@@ -141,15 +137,8 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 	}
 
 	public void track(ImagePlus imp, String directory, String filename) {
-		int minSize = Parameters.minSize;
-		int maxSize = Parameters.maxSize;
-		float maxVelocity = Parameters.maxVelocity;
-
+		//float maxVelocity = Parameters.maxVelocity;
 		int nFrames = imp.getStackSize();
-		if (nFrames < 2) {
-			IJ.showMessage("Tracker", "Stack required");
-			return;
-		}
 		Calibration cal = imp.getCalibration();
 		pixelWidth = cal.pixelWidth;
 		pixelHeight = cal.pixelHeight;
@@ -171,17 +160,6 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 		if (verbose)
 			IJ.log("min=" + minThresh + ",max=" + maxThresh);
 
-		// Set options for particle analyser and measurements
-
-		int options = (ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES
-				// |ParticleAnalyzer.INCLUDE_HOLES
-				| ParticleAnalyzer.SHOW_NONE); // set all PA options false
-		int measurements = CENTROID + AREA + ELLIPSE + PERIMETER + CIRCULARITY;
-
-		// Initialize results table
-		ResultsTable rt = new ResultsTable();
-		rt.reset();
-
 		// Code required for deflickering and background subtraction on the fly
 		double roiAvg[] = new double[nFrames + 1];
 		BackgroundSubtracter bs = new BackgroundSubtracter();
@@ -200,9 +178,7 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 															// already binary.
 			bs.rollingBallBackground(bip, 15, true, true, false, false, true);
 		}
-
-		
-////////============ particle segmentation by thresholding 		
+	
 		IJ.showStatus("Finding all particles...");
 
 		// record particle positions for each frame in an ArrayList	
@@ -212,7 +188,8 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 		// objects>
 		HashMap<Integer, ArrayList<particle>> theParticles = new HashMap<Integer, ArrayList<particle>>();
 		
-		for (int iFrame = 1; iFrame <= nFrames; iFrame++) {			
+		for (int iFrame = 1; iFrame <= nFrames; iFrame++) {
+////////============ particle segmentation by thresholding 				
 			// Do frame normalization and background subtraction on the fly
 			ip = stack.getProcessor(iFrame);
 			// key steps for backgound subtraction
@@ -240,44 +217,13 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 
 			// theParticles[iFrame - 1] = new ArrayList();
 
-	////////============ particle localization 
-			
-			rt.reset();
-			ParticleAnalyzer pa = new ParticleAnalyzer(options, measurements, rt, minSize, maxSize);
-			if (!pa.analyze(imp, ip))
-				return;
-			float[] sxRes = rt.getColumn(ResultsTable.X_CENTROID);
-			float[] syRes = rt.getColumn(ResultsTable.Y_CENTROID);
-			float[] areaRes = rt.getColumn(ResultsTable.AREA);
-			float[] angleRes = rt.getColumn(ResultsTable.ANGLE);
-			float[] majorRes = rt.getColumn(ResultsTable.MAJOR);
-			float[] minorRes = rt.getColumn(ResultsTable.MINOR);
-			float[] perimRes = rt.getColumn(ResultsTable.PERIMETER);
-			float[] circRes = rt.getColumn(ResultsTable.CIRCULARITY);
-
-			ArrayList<particle> particleList = new ArrayList<particle>();
-//			if (sxRes == null)
-//				;
-			// IJ.log("Frame"+iFrame+" contains no objects!");//return;// do not exit! there
-			// may be objects on the next slice image!!!
-			if (sxRes != null) {
-				// IJ.log("Frame"+iFrame+" contains "+sxRes.length+" objects");
-				for (int iPart = 0; iPart < sxRes.length; iPart++) {
-					particle aParticle = new particle(sxRes[iPart], syRes[iPart], iFrame - 1, areaRes[iPart],
-							angleRes[iPart], majorRes[iPart], minorRes[iPart], perimRes[iPart]);
-					particleList.add(aParticle);
-				}
-				if (sxRes.length > nMax) {
-					nMax = sxRes.length; // record the maximum number of particles found in one frame.
-					nMaxFrm = iFrame; // record the frame at which the maximum number of particles is found. (KP)
-				}
-				if (sxRes.length < nMin) {
-					nMin = sxRes.length; // record the minimum number of particles found in one frame. (KP)
-					nMinFrm = iFrame; // record the frame at which the minimum number of particles is found. (KP)
-				}
-			}
+////////============ particle localization 
+			ArrayList<particle> particleList =  particleLocalization(imp, ip, iFrame);
 			//frame number starts from 1
-			theParticles.put(iFrame, particleList);
+			if (particleList != null)
+				theParticles.put(iFrame, particleList);
+			else
+				return;
 			
 			IJ.showProgress((double) iFrame / nFrames);
 			if (IJ.escapePressed()) {
@@ -285,7 +231,6 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 				done = true;
 				return;
 			}
-			// IJ.log((int)iFrame+",");
 		}
 
 ////////============ particle linking 
@@ -326,6 +271,56 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 			TrackPlotter tpl = new TrackPlotter(imp, theTracks);
 			tpl.run();
 		}
+	}
+	
+	public ArrayList<particle> particleLocalization(ImagePlus imp, ImageProcessor ip, int iFrame){
+		
+		// Set options for particle analyser and measurements
+		int optionsPA = (ParticleAnalyzer.EXCLUDE_EDGE_PARTICLES
+				// |ParticleAnalyzer.INCLUDE_HOLES
+				| ParticleAnalyzer.SHOW_NONE); // set all PA options false
+		int measurementsPA = CENTROID + AREA + ELLIPSE + PERIMETER + CIRCULARITY;
+		int minSize = Parameters.minSize;
+		int maxSize = Parameters.maxSize;
+		
+		// Initialize results table
+		ResultsTable rt = new ResultsTable();		
+
+		ParticleAnalyzer pa = new ParticleAnalyzer(optionsPA, measurementsPA, rt, minSize, maxSize);
+		if (!pa.analyze(imp, ip))
+			return null;
+		float[] sxRes = rt.getColumn(ResultsTable.X_CENTROID);
+		float[] syRes = rt.getColumn(ResultsTable.Y_CENTROID);
+		float[] areaRes = rt.getColumn(ResultsTable.AREA);
+		float[] angleRes = rt.getColumn(ResultsTable.ANGLE);
+		float[] majorRes = rt.getColumn(ResultsTable.MAJOR);
+		float[] minorRes = rt.getColumn(ResultsTable.MINOR);
+		float[] perimRes = rt.getColumn(ResultsTable.PERIMETER);
+		float[] circRes = rt.getColumn(ResultsTable.CIRCULARITY);
+
+		ArrayList<particle> particleList = new ArrayList<particle>();
+//		if (sxRes == null)
+//			;
+		// IJ.log("Frame"+iFrame+" contains no objects!");//return;// do not exit! there
+		// may be objects on the next slice image!!!
+		if (sxRes != null) {
+			// IJ.log("Frame"+iFrame+" contains "+sxRes.length+" objects");
+			for (int iPart = 0; iPart < sxRes.length; iPart++) {
+				particle aParticle = new particle(sxRes[iPart], syRes[iPart], iFrame - 1, areaRes[iPart],
+						angleRes[iPart], majorRes[iPart], minorRes[iPart], perimRes[iPart]);
+				particleList.add(aParticle);
+			}
+			if (sxRes.length > nMax) {
+				nMax = sxRes.length; // record the maximum number of particles found in one frame.
+				nMaxFrm = iFrame; // record the frame at which the maximum number of particles is found. (KP)
+			}
+			if (sxRes.length < nMin) {
+				nMin = sxRes.length; // record the minimum number of particles found in one frame. (KP)
+				nMinFrm = iFrame; // record the frame at which the minimum number of particles is found. (KP)
+			}
+		}
+		//frame number starts from 1		
+		return particleList;
 	}
 
 	public ArrayList<ArrayList<particle>> particleLinking(int nFrames, HashMap<Integer, ArrayList<particle>> theParticles) {

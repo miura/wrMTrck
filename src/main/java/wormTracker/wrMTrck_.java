@@ -510,7 +510,8 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 		wrMTrck_ wmt = new wrMTrck_();
 		String  rawFilename = wmt.prepareRawFilename(imp);
 		Parameters.minTrackLength = 10;
-		Parameters.rawData = 1;
+		Parameters.bShowPathLengths = true;
+		Parameters.rawData = 2;
 		wmt.suppressHeader = false;
 		Parameters.bSaveResultsFile = true;
 		//SaveDialog sd = new SaveDialog("Save Track Results", rawFilename, ".txt");
@@ -520,7 +521,7 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 		String filename = rawFilename + ".txt"; //sd.getFileName();
 		//IJ.log(directory);
 		//IJ.log(filename);
-		imp.getProcessor().setThreshold(0, 133, ImageProcessor.NO_LUT_UPDATE);
+		imp.getProcessor().setThreshold(0, 133, ImageProcessor.NO_LUT_UPDATE); //this should become adjustable. 
 		wmt.track(imp, directory, filename);
 
 	}

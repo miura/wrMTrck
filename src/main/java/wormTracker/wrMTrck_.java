@@ -411,76 +411,7 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 		}
 		return theTracks;
 	}
-//	/** generate smoothed coordinates to eliminate some digital noise -
-//	 * without coordinate smoothing lenght of track for immobile particles can actually be quite long
-//	 * for now only 5-point smoothing is possible, but the number of points should be user definable in later releases
-//	*/
-//	public void trackSmoother(ArrayList<ArrayList<particle>> theTracks, int nFrames) {
-//		double temp;
-//		double temp2;
-//		double[] rawX = new double[nFrames + 2];
-//		double[] rawY = new double[nFrames + 2];
-//		double[] smoothX = new double[nFrames + 2];
-//		double[] smoothY = new double[nFrames + 2];
-////		for (ListIterator iT = theTracks.listIterator(); iT.hasNext();) {
-////			List bTrack = (ArrayList) iT.next();
-//		for (ArrayList<particle> bTrack: theTracks) {
-//			int displayTrackNr = 0;
-//			if (bTrack.size() >= Parameters.minTrackLength) {
-//				displayTrackNr++;
-//				ListIterator jT = bTrack.listIterator();
-//				particle oldParticle = (particle) jT.next();
-//				particle oldParticle2 = oldParticle;
-//				rawX[1] = oldParticle.x;
-//				rawY[1] = oldParticle.y;
-//				smoothX[1] = oldParticle.x;
-//				smoothY[1] = oldParticle.y;
-//				oldParticle.sx = oldParticle.x;
-//				oldParticle.sy = oldParticle.y;
-//				int i = 1;
-//				int t = 0;
-//				for (; jT.hasNext();) {
-//					i++;
-//					particle newParticle = (particle) jT.next();
-//					rawX[i] = newParticle.x;
-//					rawY[i] = newParticle.y;
-//					newParticle.sx = newParticle.x;
-//					newParticle.sy = newParticle.y;
-//					smoothX[i] = newParticle.x;
-//					smoothY[i] = newParticle.y;
-//					if (i >= 3) {
-//						temp = 0;
-//						temp2 = 0;
-//						for (t = 0; t < 3; t++) {
-//							temp += rawX[t + i - 2];
-//							temp2 += rawY[t + i - 2];
-//						}
-//						smoothX[i - 1] = (float) temp / 3;
-//						smoothY[i - 1] = (float) temp2 / 3;
-//						oldParticle.sx = (float) temp / 3;
-//						oldParticle.sy = (float) temp2 / 3;
-//
-//					}
-//					if (i >= 5) {
-//						temp = 0;
-//						temp2 = 0;
-//						for (t = 0; t < 5; t++) {
-//							temp += rawX[t + i - 4];
-//							temp2 += rawY[t + i - 4];
-//						}
-//						smoothX[i - 2] = (float) temp / 5;
-//						smoothY[i - 2] = (float) temp2 / 5;
-//						oldParticle2.sx = (float) temp / 5;
-//						oldParticle2.sy = (float) temp2 / 5;
-//
-//					} else {
-//					}
-//					oldParticle2 = oldParticle;
-//					oldParticle = newParticle;
-//				}
-//			}
-//		}
-//	}		
+	
 	// Utility functions
 
 	int doOffset(int center, int maxSize, int displacement) {
@@ -512,8 +443,11 @@ public class wrMTrck_ implements PlugInFilter, Measurements {
 		Parameters.minTrackLength = 10;
 		Parameters.bShowPathLengths = true;
 		Parameters.rawData = 2;
+		Parameters.bSaveResultsFile = false;
+		Parameters.bPlotBendTrack = true;
+		Parameters.bShowPositions = true;
 		wmt.suppressHeader = false;
-		Parameters.bSaveResultsFile = true;
+
 		//SaveDialog sd = new SaveDialog("Save Track Results", rawFilename, ".txt");
 
 		String directory = "/Users/miura/Desktop/testoutCUI/";
